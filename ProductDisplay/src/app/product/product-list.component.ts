@@ -7,6 +7,10 @@ import { Component } from '@angular/core'
 
 export class productListComponent {
     pageTitle: string = 'Product list';
+    imageWidth: number=50;
+    imageMargin: number=2;
+    showImage: boolean=false;
+    listFiler:string='cart';
     products: any[] = [
 
 
@@ -62,4 +66,8 @@ export class productListComponent {
         }
 
     ]
+
+    toggleImage(): void{
+        this.showImage=!this.showImage;
+    }
 }
