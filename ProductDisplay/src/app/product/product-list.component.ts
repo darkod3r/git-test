@@ -1,22 +1,38 @@
-import { Component } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
+import { IProduct } from './product';
+import { ProductService } from './product.service';
 
 @Component({
     selector: 'pm-products',
-    templateUrl: './product-list.component.html'
+    templateUrl: './product-list.component.html',
+    styleUrls: ['./product-list.component.css']
 })
 
-export class productListComponent {
+export class productListComponent implements OnInit {
     pageTitle: string = 'Product list';
-    imageWidth: number=50;
-    imageMargin: number=2;
-    showImage: boolean=false;
-    listFiler:string='cart';
-    products: any[] = [
+    imageWidth: number = 50;
+    imageMargin: number = 2;
+    showImage: boolean = false;
 
+    _listFilter: string;
+    filteredProducts: IProduct[];
+    get listFilter(): string {
+        return this._listFilter;
+    }
+    onRatingClicked(message: string): void {
+        this.pageTitle = 'Product List' + message;
+    }
+    set listFilter(value: string) {
+        this._listFilter = value;
+        this.filteredProducts = this._listFilter ? this.performFilter(this.listFilter) : this.products;
+    }
 
+    listFiler: string = 'cart'; //we can use any[] below
+    products: IProduct[] = [
         {
             "productId": 1,
             "productName": "Leaf Rake",
+
             "productCode": "GDN-0011",
             "releaseDate": "March 19, 2016",
             "description": "Leaf rake with 48-inch wooden handle.",
@@ -67,7 +83,20 @@ export class productListComponent {
 
     ]
 
-    toggleImage(): void{
-        this.showImage=!this.showImage;
+    toggleImage(): void {
+        this.showImage = !this.showImage;
+    }
+    ngOnInit(): void {
+        this.products = this.productService.getProducts();
+        this.filteredProducts = this.products;
+    }
+    constructor(private productService: ProductService) {
+        
+      
+    }
+    performFilter(filterby: string): IProduct[] {
+        filterby = filterby.toLocaleLowerCase();
+        return this.products.filter((product: IProduct) =>
+            product.productName.toLocaleLowerCase().indexOf(filterby) !== -1);
     }
 }
